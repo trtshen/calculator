@@ -45,7 +45,7 @@
 				<form ng-submit="calculate()">
 					<div class="input-group">
 						<span class="input-group-addon" id="consumption">Consumption (kWh)</span>
-						<input type="number" class="form-control" placeholder="kWh" aria-describedby="consumption" ng-model="kwh" autofocus>
+						<input type="number" class="form-control" placeholder="kWh" aria-describedby="consumption" ng-model="kwh" autofocus ng-change="calculate()">
 					</div>
 				</form>
 			</section>
@@ -54,7 +54,7 @@
 				<form ng-submit="refinance(finance)">
 					<div class="input-group">
 						<span class="input-group-addon" id="prediction">Predict consumable kWh (RM)</span>
-						<input type="number" class="form-control" placeholder="currency in MYR" aria-describedby="prediction" ng-model="finance">
+						<input type="number" class="form-control" placeholder="currency in MYR" aria-describedby="prediction" ng-model="finance" ng-change="refinance(finance)">
 					</div>
 				</form>
 			</section>
