@@ -15,8 +15,8 @@
 </head>
 <body ng-app="tnb" ng-cloak>
 
-	<main class="text-center">
-		<section ng-controller="billCtrl">
+	<main class="text-center container">
+		<section class="row" ng-controller="billCtrl">
 			<header>
 				<h1>TNB Calculator 2016 (Household)</h1>
 				<p>Calculate your electricity bill here!</p>
@@ -26,7 +26,7 @@
 				<table class="table table-striped">
 					<thead>
 						<tr>
-							<th>No</th>
+							<th>Block</th>
 							<th>Tariff Block (kWh)</th>
 							<th>Rate (cents)</th>
 						</tr>
@@ -43,7 +43,7 @@
 
 			<section class="col-md-12">
 				<form ng-submit="calculate()">
-					<div class="input-group">
+					<div class="input-group input-group-lg">
 						<span class="input-group-addon" id="consumption">Consumption (kWh)</span>
 						<input type="number" class="form-control" placeholder="kWh" aria-describedby="consumption" ng-model="kwh" autofocus ng-change="calculate()">
 					</div>
@@ -52,7 +52,7 @@
 
 			<section class="col-md-12 spacer">
 				<form ng-submit="refinance(finance)">
-					<div class="input-group">
+					<div class="input-group input-group-lg">
 						<span class="input-group-addon" id="prediction">Predict consumable kWh (RM)</span>
 						<input type="number" class="form-control" placeholder="currency in MYR" aria-describedby="prediction" ng-model="finance" ng-change="refinance(finance)">
 					</div>
