@@ -19,7 +19,7 @@
 	<main class="text-center container">
 		<section class="row" ng-controller="billCtrl">
 			<header>
-				<h1>TNB Calculator 2016 (Household)</h1>
+				<h1>TNB Calculator 2023 (Household)</h1>
 				<p>Calculate your electricity bill here!</p>
 			</header>
 
@@ -100,7 +100,7 @@
 								<td>RM{{renewEnergyFee}}</td>
 							</tr>
 							<tr>
-								<td>ICPT Rebate (2 cents/kwh till 2023)</td>
+								<td>ICPT Rebate (RM0.02/kwh - Dec 2023)</td>
 								<td>RM{{icpt}}</td>
 							</tr>
 							<tr>
@@ -158,12 +158,12 @@
 				},
 				{
 					level: 5,
-					charge: 57.1,
-					limit: 999
+					charge: 57.1
 				}
 			];
 
 			$scope.calculate = function () {
+				$scope.finance = undefined; // Reset the finance amount
 				var totalOfUsage = 0;
 				var totalWithoutGST = 0;
 				var totalWithGST = 0;
@@ -175,7 +175,7 @@
 				// Iterate over the rates and calculate the cost for each block
 				angular.forEach($scope.rates, function (rate) {
 					if (kwhRemaining > 0) {
-						var chargeableKwh = Math.min(kwhRemaining, rate.limit);
+						var chargeableKwh = (rate.limit) ? Math.min(kwhRemaining, rate.limit) : kwhRemaining;
 						var costForBlock = chargeableKwh * (rate.charge / 100);
 						var icptRebate = (icptRate * chargeableKwh);
 						totalIcptRebate += icptRebate;
@@ -210,54 +210,49 @@
 			};
 
 			// experimental
-			$scope.refinance = function(amount) {
-				$scope.total = undefined;
-				$scope.kwh = undefined;
+			$scope.refinance = function (amount) {
+				$scope.kwh = undefined; // Reset the kWh
+				$scope.consumable = 0; // Reset the consumable kWh
+				if (amount <= 0) {
+					// If the amount is 0 or less, no need to calculate anything
+					return;
+				}
 
-				var consumable = 0;
-				var stages = {};
+				var consumableKwh = 0;
+				var gstRate = 0.06;
+				var icptRate = 0.02; // ICPT rebate for each kWh used
+				var renewEnergyFeeRate = 0.016; // Renewable Energy Fund
 
-				angular.forEach($scope.rates, function(rate) {
-					stages[rate.level] = {
-						max: (rate.charge / 100 * rate.limit),
-						limit: rate.limit,
-						charge: (rate.charge / 100)
-					};
+				// Remove the Renewable Energy Fund fee from the amount
+				var netAmount = amount / (1 + renewEnergyFeeRate);
+
+				// Calculate the reverse for GST applied amount (for consumption above 600 kWh)
+				if (netAmount > $scope.rates[3].limit * ($scope.rates[3].charge / 100)) {
+					var gstApplicableAmount = (netAmount - $scope.rates[3].limit * ($scope.rates[3].charge / 100)) / (1 + gstRate);
+					consumableKwh += (gstApplicableAmount / ($scope.rates[3].charge / 100)) + $scope.rates[3].limit;
+					netAmount -= gstApplicableAmount + (gstApplicableAmount * gstRate);
+				}
+
+				// Calculate the reverse for non-GST applied amount (for consumption below 600 kWh)
+				angular.forEach($scope.rates, function (rate) {
+					if (rate.level < 4 && netAmount > 0) { // Only consider non-GST blocks and if there is an amount left
+						var maxCostForRate = rate.limit * (rate.charge / 100);
+						var icptRebateForRate = icptRate * rate.limit;
+						var costForRateWithoutRebate = Math.min(netAmount, maxCostForRate) + icptRebateForRate;
+
+						if (costForRateWithoutRebate <= icptRebateForRate) {
+							// This means the amount is not enough to buy any kWh after ICPT rebate is considered
+							return;
+						}
+
+						var kwhForRate = costForRateWithoutRebate / ((rate.charge / 100) + icptRate);
+						consumableKwh += kwhForRate;
+						netAmount -= costForRateWithoutRebate - icptRebateForRate;
+					}
 				});
 
-				if (amount >= stages[1].max) {
-					consumable += stages[1].limit;
-					amount -= stages[1].max;
-				} else {
-					consumable = amount / stages[1].charge;
-					amount = 0;
-				}
-
-				if (amount >= stages[2].max) {
-					consumable += stages[2].limit;
-					amount -= stages[2].max;
-				} else {
-					consumable += amount / stages[2].charge;
-					amount = 0;
-				}
-
-				if (amount > 0) {
-					amount -= (amount * 0.06);
-
-					if (amount >= stages[3].max) {
-						consumable += stages[3].limit;
-						amount -= stages[3].max;
-					} else {
-						consumable += amount / stages[3].charge;
-						amount = 0;
-					}
-
-					if (amount > 0) {
-						consumable += amount / stages[4].charge;
-					}
-				}
-
-				$scope.consumable = (consumable).toFixed(0);
+				// Update the consumable kWh on scope
+				$scope.consumable = Math.max(0, consumableKwh).toFixed(0);
 			};
 
 			function getDecimal(num) {
