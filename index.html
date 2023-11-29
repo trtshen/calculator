@@ -84,6 +84,10 @@
 					<table class="table table-striped">
 						<tbody>
 							<tr>
+								<td width="50%">Total (Before Any Rebate/fee)</td>
+								<td>RM{{totalOfUsage}}</td>
+							</tr>
+							<tr>
 								<td width="50%">Total (Before GST)</td>
 								<td>RM{{total}}</td>
 							</tr>
@@ -92,7 +96,11 @@
 								<td>RM{{gst}}</td>
 							</tr>
 							<tr>
-								<td>ICPT Rebate (Valid till June 2016)</td>
+								<td>Renewable Energy Fee</td>
+								<td>RM{{renewEnergyFee}}</td>
+							</tr>
+							<tr>
+								<td>ICPT Rebate (2 cents/kwh till 2023)</td>
 								<td>RM{{icpt}}</td>
 							</tr>
 							<tr>
@@ -155,58 +163,50 @@
 				}
 			];
 
-			$scope.calculate = function() {
-				$scope.consumable = undefined;
-				$scope.finance = undefined;
+			$scope.calculate = function () {
+				var totalOfUsage = 0;
+				var totalWithoutGST = 0;
+				var totalWithGST = 0;
+				var kwhRemaining = $scope.kwh;
+				var totalIcptRebate = 0;
+				var icptRate = 0.02; // ICPT rebate for each kWh used
+				var gstRate = 0.06;
 
-				var total = 0,
-					kwh = $scope.kwh,
-					icptRebate = {
-						nongst: (kwh >= 300) ? (300 * 1.52 / 100) : 0,
-						gst: (kwh > 300) ? ((kwh - 300) * 1.52 / 100) : 0
-					}, // rebate > 300 tariff
-					cent = 0,
-					gstRate = 0.06;
-
-				var prices = {
-					nongst: 0,
-					gst: 0,
-				};
-
-				angular.forEach($scope.rates, function(rate) {
-					cent = (rate.charge/100);
-
-					if (rate.level === 4) {
-						prices['gst'] += (kwh * cent);
-						total += (kwh * cent);
-						kwh = 0;
-					} else if (kwh > rate.limit) {
-						total += (rate.limit * cent);
-						kwh -= rate.limit;
-
-						if (rate.level < 3) {
-							prices['nongst'] += (rate.limit * cent);
+				// Iterate over the rates and calculate the cost for each block
+				angular.forEach($scope.rates, function (rate) {
+					if (kwhRemaining > 0) {
+						var chargeableKwh = Math.min(kwhRemaining, rate.limit);
+						var costForBlock = chargeableKwh * (rate.charge / 100);
+						var icptRebate = (icptRate * chargeableKwh);
+						totalIcptRebate += icptRebate;
+						if (rate.level < 4) {
+							// For the first three blocks, no GST is applied
+							totalWithoutGST += costForBlock - icptRebate;
 						} else {
-							prices['gst'] += (rate.limit * cent);
+							// For the fourth block and onwards, GST is applied
+							totalWithGST += costForBlock - icptRebate;
 						}
-					} else if (kwh !== 0) {
-						total += (kwh * cent);
-						if (rate.level < 3) {
-							prices['nongst'] += (kwh * cent);
-						} else {
-							prices['gst'] += (kwh * cent);
-						}
-						kwh = 0;
+
+						kwhRemaining -= chargeableKwh;
+						totalOfUsage += costForBlock;
 					}
-
 				});
 
-				total = prices['nongst'] - icptRebate['nongst'];
-				var gstChargeable = prices['gst'] - icptRebate['gst'];
-				$scope.total = getDecimal(total + gstChargeable);
-				$scope.gst = getDecimal(gstChargeable * gstRate);
-				$scope.icpt = getDecimal(icptRebate['gst'] + icptRebate['nongst']);
-				$scope.gstTotal = getDecimal(total + gstChargeable + (gstChargeable * gstRate));
+				// Apply GST to the total cost for GST applicable blocks
+				var gstAmount = totalWithGST * gstRate;
+
+				// Sum up total before GST, then add GST, and finally subtract ICPT rebate
+				var totalBeforeGST = totalWithoutGST + totalWithGST;
+				var renewEnergyFee = totalOfUsage * 0.016;
+				var totalAfterGST = totalBeforeGST + renewEnergyFee + gstAmount;
+
+				// Update scope variables for display in the view
+				$scope.totalOfUsage = totalOfUsage.toFixed(2);
+				$scope.total = totalBeforeGST.toFixed(2);
+				$scope.gst = gstAmount.toFixed(2);
+				$scope.icpt = totalIcptRebate.toFixed(2);
+				$scope.gstTotal = totalAfterGST.toFixed(2);
+				$scope.renewEnergyFee = renewEnergyFee.toFixed(2);
 			};
 
 			// experimental
