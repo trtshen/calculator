@@ -131,7 +131,7 @@
 				{
 					level: 1,
 					charge: 21.8,
-					limit: 200
+					limit: 200,
 				},
 				{
 					level: 2,
@@ -147,6 +147,11 @@
 					level: 4,
 					charge: 54.6,
 					limit: 300
+				},
+				{
+					level: 5,
+					charge: 57.1,
+					limit: 999
 				}
 			];
 
@@ -175,7 +180,6 @@
 						prices['gst'] += (kwh * cent);
 						total += (kwh * cent);
 						kwh = 0;
-
 					} else if (kwh > rate.limit) {
 						total += (rate.limit * cent);
 						kwh -= rate.limit;
