@@ -1,5 +1,5 @@
 // Bill calculation utilities and data
-const rates = [
+export const rates = [
   {
     level: 1,
     charge: 21.8,
@@ -26,7 +26,7 @@ const getDecimal = (num) => {
   return parseFloat(num).toFixed(2);
 };
 
-const calculateBill = (kwhInput) => {
+export const calculateBill = (kwhInput) => {
   if (!kwhInput || kwhInput <= 0) {
     return null;
   }
@@ -82,7 +82,7 @@ const calculateBill = (kwhInput) => {
   };
 };
 
-const calculateConsumable = (amount) => {
+export const calculateConsumable = (amount) => {
   if (!amount || amount <= 0) {
     return null;
   }
