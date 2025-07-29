@@ -86,6 +86,7 @@
 								placeholder="Total Consumption (kWh)"
 								aria-describedby="consumption"
 								ng-model="kwh"
+								ng-change="calculate()"
 								autofocus
 								required>
 						</div>
@@ -99,6 +100,7 @@
 								placeholder="Green Electricity Tariff (kWh)"
 								aria-describedby="gtr"
 								ng-model="gtr"
+								ng-change="calculate()"
 								min="0">
 						</div>
 					</div>
@@ -116,9 +118,12 @@
 							id="prediction">Predict consumable kWh (RM)</span>
 						<input type="number"
 							class="form-control"
-							placeholder="currency in MYR"
+							placeholder="Enter budget in MYR"
 							aria-describedby="prediction"
-							ng-model="finance">
+							ng-model="finance"
+							ng-change="refinance(finance)"
+							step="0.01"
+							min="0">
 					</div>
 				</form>
 			</section>
@@ -333,6 +338,39 @@
 			return i;
 		}
 
+		// Reverse engineer kWh from cost function
+		function reverseCalculateKwh(targetCost, gtr) {
+			gtr = gtr || 0;
+			
+			// Binary search approach to find the kWh that produces the target cost
+			var low = 0;
+			var high = 10000; // Maximum reasonable kWh for domestic use
+			var tolerance = 0.01; // RM 0.01 tolerance
+			var maxIterations = 100;
+			var iteration = 0;
+			
+			while (low <= high && iteration < maxIterations) {
+				var mid = Math.floor((low + high) / 2);
+				var result = calculateDomestic2(mid, gtr);
+				var currentCost = result.total;
+				
+				if (Math.abs(currentCost - targetCost) <= tolerance) {
+					return mid;
+				}
+				
+				if (currentCost < targetCost) {
+					low = mid + 1;
+				} else {
+					high = mid - 1;
+				}
+				
+				iteration++;
+			}
+			
+			// If binary search doesn't converge, use the closest value
+			return Math.floor((low + high) / 2);
+		}
+
 		var tnb = angular.module('tnb', []);
 		tnb.controller('billCtrl', ['$scope', function ($scope) {
 			$scope.kwh = null;
@@ -355,6 +393,16 @@
 				$scope.gst = getDecimal($scope.result.tax);
 				$scope.icpt = getDecimal(Math.abs($scope.result.icptTotal));
 				$scope.gstTotal = getDecimal($scope.result.total);
+			};
+
+			$scope.refinance = function (targetCost) {
+				if (!targetCost || targetCost <= 0) {
+					$scope.consumable = 0;
+					return;
+				}
+
+				var gtr = $scope.gtr || 0;
+				$scope.consumable = reverseCalculateKwh(targetCost, gtr);
 			};
 
 			function getDecimal(num) {
