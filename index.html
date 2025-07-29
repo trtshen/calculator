@@ -1,25 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8">
-	<title>TNB bill calculator</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<title>TNB Bill Calculator 2025 (Updated)</title>
+	<link rel="stylesheet"
+		href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+		integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+		crossorigin="anonymous">
 	<style>
-		table th, td {
-			text-align:center;
+		table th,
+		td {
+			text-align: center;
 		}
+
 		.spacer {
 			padding-top: 1.5em;
 		}
 	</style>
 </head>
-<body ng-app="tnb" ng-cloak>
+
+<body ng-app="tnb"
+	ng-cloak>
 
 	<main class="text-center">
 		<section ng-controller="billCtrl">
 			<header>
-				<h1>TNB Calculator 2016 (Household)</h1>
-				<p>Calculate your electricity bill here!</p>
+				<h1>TNB Bill Calculator 2025 (Updated)</h1>
+				<p>Calculate your electricity bill with the latest TNB tariff structure!</p>
 			</header>
 
 			<section class="col-md-12">
@@ -28,14 +36,40 @@
 						<tr>
 							<th>No</th>
 							<th>Tariff Block (kWh)</th>
-							<th>Rate (cents)</th>
+							<th>Rate (sen/kWh)</th>
+							<th>Service Tax</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr ng-repeat="rate in ::rates">
-							<td>{{$index + 1}}</td>
-							<td>{{rate.limit}}</td>
-							<td>{{rate.charge}}</td>
+						<tr>
+							<td>1</td>
+							<td>1-200</td>
+							<td>21.8</td>
+							<td>No</td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>201-300</td>
+							<td>33.4</td>
+							<td>No</td>
+						</tr>
+						<tr>
+							<td>3</td>
+							<td>301-600</td>
+							<td>51.6</td>
+							<td>No</td>
+						</tr>
+						<tr>
+							<td>4</td>
+							<td>601-900</td>
+							<td>54.6</td>
+							<td>Yes (8%)</td>
+						</tr>
+						<tr>
+							<td>5</td>
+							<td>901 onwards</td>
+							<td>57.1</td>
+							<td>Yes (8%)</td>
 						</tr>
 					</tbody>
 				</table>
@@ -43,9 +77,34 @@
 
 			<section class="col-md-12">
 				<form ng-submit="calculate()">
-					<div class="input-group">
-						<span class="input-group-addon" id="consumption">Consumption (kWh)</span>
-						<input type="number" class="form-control" placeholder="kWh" aria-describedby="consumption" ng-model="kwh" autofocus>
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon"
+								id="consumption">Total Consumption (kWh)</span>
+							<input type="number"
+								class="form-control"
+								placeholder="Total Consumption (kWh)"
+								aria-describedby="consumption"
+								ng-model="kwh"
+								autofocus
+								required>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon"
+								id="gtr">Green Electricity Tariff (kWh)</span>
+							<input type="number"
+								class="form-control"
+								placeholder="Green Electricity Tariff (kWh)"
+								aria-describedby="gtr"
+								ng-model="gtr"
+								min="0">
+						</div>
+					</div>
+					<div class="form-group">
+						<button type="submit"
+							class="btn btn-primary btn-block">Calculate Bill</button>
 					</div>
 				</form>
 			</section>
@@ -53,13 +112,19 @@
 			<section class="col-md-12 spacer">
 				<form ng-submit="refinance(finance)">
 					<div class="input-group">
-						<span class="input-group-addon" id="prediction">Predict consumable kWh (RM)</span>
-						<input type="number" class="form-control" placeholder="currency in MYR" aria-describedby="prediction" ng-model="finance">
+						<span class="input-group-addon"
+							id="prediction">Predict consumable kWh (RM)</span>
+						<input type="number"
+							class="form-control"
+							placeholder="currency in MYR"
+							aria-describedby="prediction"
+							ng-model="finance">
 					</div>
 				</form>
 			</section>
 
-			<section class="col-md-12 spacer" ng-if="consumable > 0">
+			<section class="col-md-12 spacer"
+				ng-if="consumable > 0">
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						Consumable kWh (Experimental)
@@ -75,28 +140,57 @@
 				</div>
 			</section>
 
-			<section class="col-md-12 spacer" ng-if="total > 0">
+			<section class="col-md-12 spacer"
+				ng-if="result">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						Billing Summary
+						Current Bill Breakdown
 					</div>
 					<table class="table table-striped">
 						<tbody>
 							<tr>
-								<td width="50%">Total (Before GST)</td>
-								<td>RM{{total}}</td>
+								<td width="50%">Current Bill (Before Service Tax)</td>
+								<td><strong>RM {{total}}</strong></td>
 							</tr>
 							<tr>
-								<td>GST</td>
-								<td>RM{{gst}}</td>
+								<td>8% Service Tax</td>
+								<td>RM {{gst}}</td>
 							</tr>
 							<tr>
-								<td>ICPT Rebate (Valid till June 2016)</td>
-								<td>RM{{icpt}}</td>
+								<td>ICPT Adjustment</td>
+								<td>RM {{icpt}}</td>
 							</tr>
+							<tr class="success">
+								<td><strong>Current Bill (Inclusive of Service Tax)</strong></td>
+								<td><strong>RM {{gstTotal}}</strong></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<section class="col-md-12 spacer"
+				ng-if="result && result.tiers">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						Tariff Breakdown
+					</div>
+					<table class="table table-striped">
+						<thead>
 							<tr>
-								<td>Total (After GST)</td>
-								<td>RM{{gstTotal}}</td>
+								<th>Tier</th>
+								<th>Consumption (kWh)</th>
+								<th>Rate (sen/kWh)</th>
+								<th>Charge (RM)</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="tier in result.tiers"
+								ng-if="tier.consumption > 0">
+								<td>{{tier.min}}-{{tier.max > 0 ? tier.max : tier.min + '+'}}</td>
+								<td>{{tier.consumption}}</td>
+								<td>{{tier.rate}}</td>
+								<td>{{tier.charge | number:2}}</td>
 							</tr>
 						</tbody>
 					</table>
@@ -105,12 +199,17 @@
 
 			<section class="col-md-12 spacer">
 				<div class="panel panel-default">
-				  <div class="panel-heading">Notes</div>
-				  <div class="panel-body">
-					<p class="text-info">Minimum bill amount of Domestic Tariff is RM3.00</p>
-					<p class="text-info">ICPT Rebate only available for consumption <a href="https://www.tnb.com.my/faq/tariff" target="_blank">exceed 300 kWh</a></p>
-					<p class="text-info">ICPT abbr. of <strong><a href="https://www.tnb.com.my/faq/tariff#what-is-imbalance-cost-pass-through-icpt" target="_blank">Imbalance Cost Pass-Through</a></strong></p>
-				  </div>
+					<div class="panel-heading">Notes</div>
+					<div class="panel-body">
+						<p class="text-info">This calculator is based on TNB's domestic tariff structure effective as of 2025.</p>
+						<p class="text-info">Service Tax (ST) at 8% is charged for residential customers with consumption more than 600 kWh.</p>
+						<p class="text-info">ICPT (Imbalance Cost Pass-Through) rates vary based on consumption levels and are applied automatically.</p>
+						<p class="text-info">Green Electricity Tariff (GTR) is optional and allows you to support renewable energy initiatives.</p>
+						<div style="background-color: #e6f4e6; border-left: 5px solid #4CAF50; padding: 10px; margin-top: 10px;">
+							<p><strong>Note:</strong> This information is valid until 30 June 2025. For the latest updates on Electricity Tariff Restructuring effective from 1 July 2025, please visit <a href="https://www.myTNB.com.my/tariff"
+									target="_blank">www.myTNB.com.my/tariff</a></p>
+						</div>
+					</div>
 				</div>
 			</section>
 
@@ -119,140 +218,143 @@
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+		integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+		crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.1.3/ui-bootstrap.min.js"></script>
 	<script>
+		// Constants from the newer TNB calculation system (Jul 2025)
+		var TAX_RATE = 0.08;
+		var ICPT_VALUE = 2;
+		var greenTariffRiderSettings = {
+			rate: 0.1,
+			stAfter: 600,
+			rate2: 0.2
+		};
+		var domesticRateTier = [
+			{ min: 1, max: 200, total: 200, rate: 21.8, tax: false, icpt: false },
+			{ min: 201, max: 300, total: 100, rate: 33.4, tax: false, icpt: false },
+			{ min: 301, max: 600, total: 300, rate: 51.6, tax: false, icpt: false },
+			{ min: 601, max: 900, total: 300, rate: 54.6, tax: true, icpt: true },
+			{ min: 901, total: -1, rate: 57.1, tax: true, icpt: true }
+		];
+		var ICPT_RATES = [
+			{ value: 1501, rate: -10 },
+			{ value: 601, rate: 0 },
+			{ value: 1, rate: 2 }
+		];
+
+		// Helper functions
+		function roundToTwo(n) {
+			return +(Math.round(n + "e+2") + "e-2");
+		}
+
+		function calculateGreenTariffRider(n, t, i) {
+			if (t == 0) return [0, 0, 0];
+			t > n && (t = n);
+			let r = t;
+			i == "residential" && (r = t > greenTariffRiderSettings.stAfter ? greenTariffRiderSettings.stAfter : t);
+			let e = t - r, u = r * greenTariffRiderSettings.rate, f = e * greenTariffRiderSettings.rate;
+			return [u, f, u + f];
+		}
+
+		function calculateDomestic2(n, t) {
+			var i = {
+				icptRate: ICPT_VALUE / 100,
+				consumptionWithTax: 0,
+				consumptionWithoutTax: 0,
+				chargeWithTax: 0,
+				chargeWithoutTax: 0,
+				billWithTax: 0,
+				billWithoutTax: 0,
+				consumptionWithIcptTax: 0,
+				icptTotal: 0,
+				icptWithTax: 0,
+				icptWithoutTax: 0,
+				tax: 0,
+				subtotal: 0,
+				total: 0,
+				tiers: []
+			}, f, r, e, u;
+
+			t > n && (t = n);
+			f = 0;
+			r = calculateGreenTariffRider(n, t, "residential");
+
+			domesticRateTier.forEach(function (tier) {
+				var consumption = n - f, charge;
+				if (tier.total > 0 && consumption > tier.total) {
+					consumption = tier.total;
+				}
+				f += consumption;
+				charge = roundToTwo(consumption * tier.rate / 100);
+
+				if (tier.icpt === true) {
+					i.consumptionWithIcptTax += consumption;
+				}
+
+				if (tier.tax === true) {
+					i.consumptionWithTax += consumption;
+					i.chargeWithTax += charge;
+				} else {
+					i.consumptionWithoutTax += consumption;
+					i.chargeWithoutTax += charge;
+				}
+
+				i.tiers.push({
+					consumption: consumption,
+					min: tier.min,
+					max: tier.max,
+					total: tier.total,
+					rate: tier.rate,
+					charge: charge
+				});
+			});
+
+			e = n - t;
+			i.consumptionWithIcptTax -= t;
+			if (i.consumptionWithIcptTax < 0) {
+				i.consumptionWithIcptTax = 0;
+			}
+
+			u = ICPT_RATES.find(function (rate) { return e >= rate.value; });
+			i.icptRate = (u !== null && u !== undefined ? u.rate : 0) / 100;
+			i.icptTotal = roundToTwo(e * i.icptRate);
+			i.icptWithTax = roundToTwo(i.consumptionWithIcptTax * i.icptRate);
+			i.icptWithoutTax = i.icptTotal - i.icptWithTax;
+			i.billWithTax = i.chargeWithTax - i.icptWithTax + r[1];
+			i.billWithoutTax = i.chargeWithoutTax - i.icptWithoutTax + r[0];
+			i.tax = roundToTwo(i.billWithTax * TAX_RATE);
+			i.subtotal = i.billWithTax + i.billWithoutTax;
+			i.total = i.billWithTax + i.billWithoutTax + i.tax;
+			i.chargeTotal = i.chargeWithTax + i.chargeWithoutTax;
+			i.gtr = r;
+
+			return i;
+		}
+
 		var tnb = angular.module('tnb', []);
 		tnb.controller('billCtrl', ['$scope', function ($scope) {
 			$scope.kwh = null;
-			$scope.gst = 0;
-			$scope.rates = [
-				{
-					level: 1,
-					charge: 21.8,
-					limit: 200
-				},
-				{
-					level: 2,
-					charge: 33.4,
-					limit: 100
-				},
-				{
-					level: 3,
-					charge: 51.6,
-					limit: 300
-				},
-				{
-					level: 4,
-					charge: 54.6,
-					limit: 300
-				}
-			];
+			$scope.gtr = 0; // Green Tariff Rider
+			$scope.result = null;
 
-			$scope.calculate = function() {
+			$scope.calculate = function () {
 				$scope.consumable = undefined;
 				$scope.finance = undefined;
 
-				var total = 0,
-					kwh = $scope.kwh,
-					icptRebate = {
-						nongst: (kwh >= 300) ? (300 * 1.52 / 100) : 0,
-						gst: (kwh > 300) ? ((kwh - 300) * 1.52 / 100) : 0
-					}, // rebate > 300 tariff
-					cent = 0,
-					gstRate = 0.06;
-
-				var prices = {
-					nongst: 0,
-					gst: 0,
-				};
-
-				angular.forEach($scope.rates, function(rate) {
-					cent = (rate.charge/100);
-
-					if (rate.level === 4) {
-						prices['gst'] += (kwh * cent);
-						total += (kwh * cent);
-						kwh = 0;
-
-					} else if (kwh > rate.limit) {
-						total += (rate.limit * cent);
-						kwh -= rate.limit;
-
-						if (rate.level < 3) {
-							prices['nongst'] += (rate.limit * cent);
-						} else {
-							prices['gst'] += (rate.limit * cent);
-						}
-					} else if (kwh !== 0) {
-						total += (kwh * cent);
-						if (rate.level < 3) {
-							prices['nongst'] += (kwh * cent);
-						} else {
-							prices['gst'] += (kwh * cent);
-						}
-						kwh = 0;
-					}
-
-				});
-
-				total = prices['nongst'] - icptRebate['nongst'];
-				var gstChargeable = prices['gst'] - icptRebate['gst'];
-				$scope.total = getDecimal(total + gstChargeable);
-				$scope.gst = getDecimal(gstChargeable * gstRate);
-				$scope.icpt = getDecimal(icptRebate['gst'] + icptRebate['nongst']);
-				$scope.gstTotal = getDecimal(total + gstChargeable + (gstChargeable * gstRate));
-			};
-
-			// experimental
-			$scope.refinance = function(amount) {
-				$scope.total = undefined;
-				$scope.kwh = undefined;
-
-				var consumable = 0;
-				var stages = {};
-
-				angular.forEach($scope.rates, function(rate) {
-					stages[rate.level] = {
-						max: (rate.charge / 100 * rate.limit),
-						limit: rate.limit,
-						charge: (rate.charge / 100)
-					};
-				});
-
-				if (amount >= stages[1].max) {
-					consumable += stages[1].limit;
-					amount -= stages[1].max;
-				} else {
-					consumable = amount / stages[1].charge;
-					amount = 0;
+				if (!$scope.kwh || $scope.kwh <= 0) {
+					return;
 				}
 
-				if (amount >= stages[2].max) {
-					consumable += stages[2].limit;
-					amount -= stages[2].max;
-				} else {
-					consumable += amount / stages[2].charge;
-					amount = 0;
-				}
+				var gtr = $scope.gtr || 0;
+				$scope.result = calculateDomestic2($scope.kwh, gtr);
 
-				if (amount > 0) {
-					amount -= (amount * 0.06);
-
-					if (amount >= stages[3].max) {
-						consumable += stages[3].limit;
-						amount -= stages[3].max;
-					} else {
-						consumable += amount / stages[3].charge;
-						amount = 0;
-					}
-
-					if (amount > 0) {
-						consumable += amount / stages[4].charge;
-					}
-				}
-
-				$scope.consumable = (consumable).toFixed(0);
+				// Set display values
+				$scope.total = getDecimal($scope.result.chargeTotal);
+				$scope.gst = getDecimal($scope.result.tax);
+				$scope.icpt = getDecimal(Math.abs($scope.result.icptTotal));
+				$scope.gstTotal = getDecimal($scope.result.total);
 			};
 
 			function getDecimal(num) {
@@ -261,4 +363,5 @@
 		}]);
 	</script>
 </body>
+
 </html>
