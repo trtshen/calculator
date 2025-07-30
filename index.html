@@ -17,6 +17,10 @@
 		.spacer {
 			padding-top: 1.5em;
 		}
+
+		.nav-tabs {
+			margin-bottom: 20px;
+		}
 	</style>
 </head>
 
@@ -24,7 +28,20 @@
 	ng-cloak>
 
 	<main class="text-center">
-		<section ng-controller="billCtrl">
+		<!-- Navigation Tabs -->
+		<nav class="col-md-12">
+			<ul class="nav nav-tabs nav-justified">
+				<li ng-class="{active: activeTab === 'bill'}">
+					<a href="#" ng-click="setActiveTab('bill')">TNB Bill Calculator</a>
+				</li>
+				<li ng-class="{active: activeTab === 'freedom'}">
+					<a href="#" ng-click="setActiveTab('freedom')">Financial Freedom Calculator</a>
+				</li>
+			</ul>
+		</nav>
+
+		<!-- TNB Bill Calculator (existing) -->
+		<section ng-controller="billCtrl" ng-show="activeTab === 'bill'">
 			<header>
 				<h1>TNB Bill Calculator 2025 (Updated)</h1>
 				<p>Calculate your electricity bill with the latest TNB tariff structure!</p>
@@ -217,7 +234,146 @@
 					</div>
 				</div>
 			</section>
+		</section>
 
+		<!-- Financial Freedom Calculator (new) -->
+		<section ng-controller="freedomCtrl" ng-show="activeTab === 'freedom'">
+			<header>
+				<h1>Financial Freedom Calculator</h1>
+				<p>Plan your retirement and calculate the investment needed for financial independence!</p>
+			</header>
+
+			<section class="col-md-12">
+				<form ng-submit="calculateFreedom()">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<div class="input-group">
+									<span class="input-group-addon">Current Age</span>
+									<input type="number" class="form-control" ng-model="currentAge" ng-change="calculateFreedom()" min="18" max="80" required>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<div class="input-group">
+									<span class="input-group-addon">Retirement Age</span>
+									<input type="number" class="form-control" ng-model="retirementAge" ng-change="calculateFreedom()" min="40" max="80" required>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<div class="input-group">
+									<span class="input-group-addon">Monthly Expenses (RM)</span>
+									<input type="number" class="form-control" ng-model="monthlyExpensesToday" ng-change="calculateFreedom()" min="0" step="100" required>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<div class="input-group">
+									<span class="input-group-addon">Current Savings (RM)</span>
+									<input type="number" class="form-control" ng-model="currentInvestments" ng-change="calculateFreedom()" min="0" step="1000">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-4">
+							<div class="form-group">
+								<div class="input-group">
+									<span class="input-group-addon">Expected ROI (%)</span>
+									<input type="number" class="form-control" ng-model="expectedROIPercent" ng-change="calculateFreedom()" min="1" max="20" step="0.1">
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<div class="input-group">
+									<span class="input-group-addon">Inflation Rate (%)</span>
+									<input type="number" class="form-control" ng-model="expectedInflationPercent" ng-change="calculateFreedom()" min="0" max="10" step="0.1">
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<div class="input-group">
+									<span class="input-group-addon">Withdrawal Rate (%)</span>
+									<input type="number" class="form-control" ng-model="safeWithdrawalPercent" ng-change="calculateFreedom()" min="2" max="8" step="0.1">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-success btn-block">Calculate Financial Freedom Plan</button>
+					</div>
+				</form>
+			</section>
+
+			<section class="col-md-12 spacer" ng-if="freedomResult">
+				<div class="panel panel-success">
+					<div class="panel-heading">
+						📊 Retirement Plan Summary
+					</div>
+					<table class="table table-striped">
+						<tbody>
+							<tr>
+								<td width="50%"><strong>Years to Retirement</strong></td>
+								<td><strong>{{freedomResult.yearsToRetire}} years</strong></td>
+							</tr>
+							<tr>
+								<td>Future Monthly Expenses (Inflation-adjusted)</td>
+								<td>RM {{freedomResult.futureMonthlyExpense | number:2}}</td>
+							</tr>
+							<tr class="success">
+								<td><strong>Target Retirement Fund Required</strong></td>
+								<td><strong>RM {{freedomResult.requiredRetirementFund | number:2}}</strong></td>
+							</tr>
+							<tr class="info">
+								<td>Future Value of Current Savings</td>
+								<td>RM {{freedomResult.futureValueOfCurrentSavings | number:2}}</td>
+							</tr>
+							<tr ng-if="!freedomResult.isAlreadyFinanciallyFree">
+								<td>Remaining Amount Needed</td>
+								<td>RM {{freedomResult.remainingAmountNeeded | number:2}}</td>
+							</tr>
+							<tr ng-if="freedomResult.isAlreadyFinanciallyFree" class="success">
+								<td colspan="2"><strong>🎉 Congratulations! You're already on track for financial freedom with your current savings!</strong></td>
+							</tr>
+							<tr class="warning" ng-if="!freedomResult.isAlreadyFinanciallyFree">
+								<td><strong>Monthly Investment Required</strong></td>
+								<td><strong>RM {{freedomResult.monthlyInvestmentRequired | number:2}}</strong></td>
+							</tr>
+							<tr ng-if="!freedomResult.isAlreadyFinanciallyFree">
+								<td>Total Capital to Be Invested</td>
+								<td>RM {{freedomResult.totalInvestedCapital | number:2}}</td>
+							</tr>
+							<tr class="info" ng-if="!freedomResult.isAlreadyFinanciallyFree">
+								<td><strong>Minimum Annual Income Required (20% savings)</strong></td>
+								<td><strong>RM {{freedomResult.annualIncomeRequired | number:2}}</strong></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<section class="col-md-12 spacer">
+				<div class="panel panel-default">
+					<div class="panel-heading">Assumptions & Notes</div>
+					<div class="panel-body">
+						<p class="text-info"><strong>4% Rule:</strong> Based on the safe withdrawal rate for retirement planning.</p>
+						<p class="text-info"><strong>Savings Rate:</strong> Assumes you can save 20% of your income for investments.</p>
+						<p class="text-info"><strong>Compound Growth:</strong> Calculations assume consistent monthly investments with compound returns.</p>
+						<p class="text-info"><strong>Inflation:</strong> Future expenses are adjusted for inflation to maintain purchasing power.</p>
+						<div style="background-color: #fff3cd; border-left: 5px solid #ffc107; padding: 10px; margin-top: 10px;">
+							<p><strong>Disclaimer:</strong> This calculator provides estimates based on the inputs provided. Actual investment returns may vary. Please consult with a financial advisor for personalized advice.</p>
+						</div>
+					</div>
+				</div>
+			</section>
 		</section>
 	</main>
 
@@ -371,10 +527,74 @@
 			return Math.floor((low + high) / 2);
 		}
 
+		// Financial Freedom Calculation Function
+		function calculateFinancialFreedom(inputs) {
+			var currentAge = inputs.currentAge;
+			var retirementAge = inputs.retirementAge;
+			var monthlyExpensesToday = inputs.monthlyExpensesToday;
+			var currentInvestments = inputs.currentInvestments;
+			var expectedROI = inputs.expectedROI;
+			var expectedInflationRate = inputs.expectedInflationRate;
+			var safeWithdrawalRate = inputs.safeWithdrawalRate;
+			var savingRate = inputs.savingRate || 0.2;
+
+			var yearsToRetire = retirementAge - currentAge;
+			var monthsToRetire = yearsToRetire * 12;
+			var futureMonthlyExpense = monthlyExpensesToday * Math.pow(1 + expectedInflationRate, yearsToRetire);
+			var requiredRetirementFund = (futureMonthlyExpense * 12) / safeWithdrawalRate;
+
+			// Calculate future value of current investments
+			var futureValueOfCurrentSavings = currentInvestments * Math.pow(1 + expectedROI, yearsToRetire);
+			
+			// Remaining amount needed after accounting for current savings growth
+			var remainingAmountNeeded = requiredRetirementFund - futureValueOfCurrentSavings;
+			
+			var monthlyInvestmentRequired = 0;
+			var totalInvestedCapital = 0;
+			var annualIncomeRequired = 0;
+
+			// Only calculate monthly investment if we still need more money
+			if (remainingAmountNeeded > 0) {
+				var r = expectedROI / 12;
+				var FV = remainingAmountNeeded;
+				var n = monthsToRetire;
+				monthlyInvestmentRequired = (FV * r) / (Math.pow(1 + r, n) - 1);
+				totalInvestedCapital = monthlyInvestmentRequired * n;
+				annualIncomeRequired = (monthlyInvestmentRequired * 12) / savingRate;
+			}
+
+			return {
+				yearsToRetire: yearsToRetire,
+				futureMonthlyExpense: futureMonthlyExpense,
+				requiredRetirementFund: requiredRetirementFund,
+				futureValueOfCurrentSavings: futureValueOfCurrentSavings,
+				remainingAmountNeeded: Math.max(0, remainingAmountNeeded),
+				monthlyInvestmentRequired: monthlyInvestmentRequired,
+				totalInvestedCapital: totalInvestedCapital,
+				annualIncomeRequired: annualIncomeRequired,
+				isAlreadyFinanciallyFree: remainingAmountNeeded <= 0
+			};
+		}
+
 		var tnb = angular.module('tnb', []);
+
+		// Main app controller for navigation
+		tnb.controller('mainCtrl', ['$scope', function ($scope) {
+			$scope.activeTab = 'bill';
+			$scope.setActiveTab = function(tab) {
+				$scope.activeTab = tab;
+			};
+		}]).run(['$rootScope', function($rootScope) {
+			$rootScope.activeTab = 'bill';
+			$rootScope.setActiveTab = function(tab) {
+				$rootScope.activeTab = tab;
+			};
+		}]);
+
+		// Existing bill controller
 		tnb.controller('billCtrl', ['$scope', function ($scope) {
 			$scope.kwh = null;
-			$scope.gtr = 0; // Green Tariff Rider
+			$scope.gtr = 0;
 			$scope.result = null;
 
 			$scope.calculate = function () {
@@ -408,6 +628,44 @@
 			function getDecimal(num) {
 				return parseFloat(num).toFixed(2);
 			}
+		}]);
+
+		// New financial freedom controller
+		tnb.controller('freedomCtrl', ['$scope', function ($scope) {
+			$scope.currentAge = 35;
+			$scope.retirementAge = 55;
+			$scope.monthlyExpensesToday = 3000;
+			$scope.currentInvestments = 100000;
+			$scope.expectedROIPercent = 7;
+			$scope.expectedInflationPercent = 3;
+			$scope.safeWithdrawalPercent = 4;
+			$scope.freedomResult = null;
+
+			$scope.calculateFreedom = function () {
+				if (!$scope.currentAge || !$scope.retirementAge || !$scope.monthlyExpensesToday) {
+					return;
+				}
+
+				if ($scope.retirementAge <= $scope.currentAge) {
+					return;
+				}
+
+				var inputs = {
+					currentAge: $scope.currentAge,
+					retirementAge: $scope.retirementAge,
+					monthlyExpensesToday: $scope.monthlyExpensesToday,
+					currentInvestments: $scope.currentInvestments || 0,
+					expectedROI: ($scope.expectedROIPercent || 7) / 100,
+					expectedInflationRate: ($scope.expectedInflationPercent || 3) / 100,
+					safeWithdrawalRate: ($scope.safeWithdrawalPercent || 4) / 100,
+					savingRate: 0.2
+				};
+
+				$scope.freedomResult = calculateFinancialFreedom(inputs);
+			};
+
+			// Initialize calculation
+			$scope.calculateFreedom();
 		}]);
 	</script>
 </body>

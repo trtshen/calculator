@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Freedom Calculator - Test & Validation</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <style>
+        .test-case {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .formula {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-left: 4px solid #007bff;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .calculation-step {
+            background-color: #fff3cd;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 3px;
+        }
+        .result {
+            background-color: #d4edda;
+            padding: 10px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        .error {
+            background-color: #f8d7da;
+            padding: 10px;
+            border-radius: 3px;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h1>Financial Freedom Calculator - Test & Validation</h1>
+                <p class="lead">This page tests and validates the financial freedom calculations with detailed breakdowns.</p>
+                
+                <div class="test-case">
+                    <h3>Test Case 1: Basic Scenario</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Input Parameters:</h4>
+                            <ul>
+                                <li>Current Age: 35</li>
+                                <li>Retirement Age: 55</li>
+                                <li>Monthly Expenses Today: RM 3,000</li>
+                                <li>Current Savings: RM 100,000</li>
+                                <li>Expected ROI: 7% per year</li>
+                                <li>Inflation Rate: 3% per year</li>
+                                <li>Safe Withdrawal Rate: 4% per year</li>
+                                <li>Savings Rate: 20% of income</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="test1-results"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="test-case">
+                    <h3>Test Case 2: Already Financially Free</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Input Parameters:</h4>
+                            <ul>
+                                <li>Current Age: 40</li>
+                                <li>Retirement Age: 60</li>
+                                <li>Monthly Expenses Today: RM 2,000</li>
+                                <li>Current Savings: RM 2,000,000</li>
+                                <li>Expected ROI: 8% per year</li>
+                                <li>Inflation Rate: 2.5% per year</li>
+                                <li>Safe Withdrawal Rate: 4% per year</li>
+                                <li>Savings Rate: 20% of income</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="test2-results"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="test-case">
+                    <h3>Test Case 3: High Expenses Scenario</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Input Parameters:</h4>
+                            <ul>
+                                <li>Current Age: 30</li>
+                                <li>Retirement Age: 50</li>
+                                <li>Monthly Expenses Today: RM 8,000</li>
+                                <li>Current Savings: RM 50,000</li>
+                                <li>Expected ROI: 6% per year</li>
+                                <li>Inflation Rate: 3.5% per year</li>
+                                <li>Safe Withdrawal Rate: 3.5% per year</li>
+                                <li>Savings Rate: 20% of income</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <div id="test3-results"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="test-case">
+                    <h3>Mathematical Formulas Used</h3>
+                    <div class="formula">
+                        <h4>1. Future Monthly Expenses (Inflation Adjusted):</h4>
+                        Future Expenses = Present Expenses × (1 + Inflation Rate)^Years
+                    </div>
+                    <div class="formula">
+                        <h4>2. Required Retirement Fund:</h4>
+                        Retirement Fund = (Future Monthly Expenses × 12) ÷ Safe Withdrawal Rate
+                    </div>
+                    <div class="formula">
+                        <h4>3. Future Value of Current Savings:</h4>
+                        Future Value = Current Savings × (1 + ROI)^Years
+                    </div>
+                    <div class="formula">
+                        <h4>4. Monthly Investment Required (Future Value of Annuity):</h4>
+                        PMT = (FV × r) ÷ ((1 + r)^n - 1)<br>
+                        Where: FV = Remaining Amount Needed, r = Monthly ROI, n = Months to Retirement
+                    </div>
+                    <div class="formula">
+                        <h4>5. Annual Income Required:</h4>
+                        Annual Income = (Monthly Investment × 12) ÷ Savings Rate
+                    </div>
+                </div>
+
+                <div class="test-case">
+                    <h3>Validation Tests</h3>
+                    <div id="validation-results"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Copy the financial freedom calculation function
+        function calculateFinancialFreedom(inputs) {
+            var currentAge = inputs.currentAge;
+            var retirementAge = inputs.retirementAge;
+            var monthlyExpensesToday = inputs.monthlyExpensesToday;
+            var currentInvestments = inputs.currentInvestments;
+            var expectedROI = inputs.expectedROI;
+            var expectedInflationRate = inputs.expectedInflationRate;
+            var safeWithdrawalRate = inputs.safeWithdrawalRate;
+            var savingRate = inputs.savingRate || 0.2;
+
+            var yearsToRetire = retirementAge - currentAge;
+            var monthsToRetire = yearsToRetire * 12;
+            var futureMonthlyExpense = monthlyExpensesToday * Math.pow(1 + expectedInflationRate, yearsToRetire);
+            var requiredRetirementFund = (futureMonthlyExpense * 12) / safeWithdrawalRate;
+
+            // Calculate future value of current investments
+            var futureValueOfCurrentSavings = currentInvestments * Math.pow(1 + expectedROI, yearsToRetire);
+            
+            // Remaining amount needed after accounting for current savings growth
+            var remainingAmountNeeded = requiredRetirementFund - futureValueOfCurrentSavings;
+            
+            var monthlyInvestmentRequired = 0;
+            var totalInvestedCapital = 0;
+            var annualIncomeRequired = 0;
+
+            // Only calculate monthly investment if we still need more money
+            if (remainingAmountNeeded > 0) {
+                var r = expectedROI / 12;
+                var FV = remainingAmountNeeded;
+                var n = monthsToRetire;
+                monthlyInvestmentRequired = (FV * r) / (Math.pow(1 + r, n) - 1);
+                totalInvestedCapital = monthlyInvestmentRequired * n;
+                annualIncomeRequired = (monthlyInvestmentRequired * 12) / savingRate;
+            }
+
+            return {
+                yearsToRetire: yearsToRetire,
+                futureMonthlyExpense: futureMonthlyExpense,
+                requiredRetirementFund: requiredRetirementFund,
+                futureValueOfCurrentSavings: futureValueOfCurrentSavings,
+                remainingAmountNeeded: Math.max(0, remainingAmountNeeded),
+                monthlyInvestmentRequired: monthlyInvestmentRequired,
+                totalInvestedCapital: totalInvestedCapital,
+                annualIncomeRequired: annualIncomeRequired,
+                isAlreadyFinanciallyFree: remainingAmountNeeded <= 0
+            };
+        }
+
+        function runDetailedTest(inputs, elementId) {
+            var result = calculateFinancialFreedom(inputs);
+            var html = '<h4>Calculation Breakdown:</h4>';
+            
+            // Step-by-step calculation
+            html += '<div class="calculation-step">';
+            html += '<strong>Step 1:</strong> Years to Retirement = ' + inputs.retirementAge + ' - ' + inputs.currentAge + ' = ' + result.yearsToRetire + ' years';
+            html += '</div>';
+            
+            html += '<div class="calculation-step">';
+            html += '<strong>Step 2:</strong> Future Monthly Expenses = ' + inputs.monthlyExpensesToday.toLocaleString() + ' × (1 + ' + (inputs.expectedInflationRate * 100) + '%)^' + result.yearsToRetire + ' = RM ' + result.futureMonthlyExpense.toLocaleString('en-MY', {maximumFractionDigits: 2});
+            html += '</div>';
+            
+            html += '<div class="calculation-step">';
+            html += '<strong>Step 3:</strong> Required Retirement Fund = (' + result.futureMonthlyExpense.toLocaleString('en-MY', {maximumFractionDigits: 2}) + ' × 12) ÷ ' + (inputs.safeWithdrawalRate * 100) + '% = RM ' + result.requiredRetirementFund.toLocaleString('en-MY', {maximumFractionDigits: 2});
+            html += '</div>';
+            
+            html += '<div class="calculation-step">';
+            html += '<strong>Step 4:</strong> Future Value of Current Savings = ' + inputs.currentInvestments.toLocaleString() + ' × (1 + ' + (inputs.expectedROI * 100) + '%)^' + result.yearsToRetire + ' = RM ' + result.futureValueOfCurrentSavings.toLocaleString('en-MY', {maximumFractionDigits: 2});
+            html += '</div>';
+            
+            html += '<div class="calculation-step">';
+            html += '<strong>Step 5:</strong> Remaining Amount Needed = ' + result.requiredRetirementFund.toLocaleString('en-MY', {maximumFractionDigits: 2}) + ' - ' + result.futureValueOfCurrentSavings.toLocaleString('en-MY', {maximumFractionDigits: 2}) + ' = RM ' + result.remainingAmountNeeded.toLocaleString('en-MY', {maximumFractionDigits: 2});
+            html += '</div>';
+            
+            if (result.isAlreadyFinanciallyFree) {
+                html += '<div class="result">🎉 Already Financially Free! No additional investment needed.</div>';
+            } else {
+                var monthlyROI = inputs.expectedROI / 12;
+                var months = result.yearsToRetire * 12;
+                
+                html += '<div class="calculation-step">';
+                html += '<strong>Step 6:</strong> Monthly Investment Required (FV Annuity Formula):<br>';
+                html += 'PMT = (' + result.remainingAmountNeeded.toLocaleString('en-MY', {maximumFractionDigits: 2}) + ' × ' + (monthlyROI * 100).toFixed(4) + '%) ÷ ((1 + ' + (monthlyROI * 100).toFixed(4) + '%)^' + months + ' - 1) = RM ' + result.monthlyInvestmentRequired.toLocaleString('en-MY', {maximumFractionDigits: 2});
+                html += '</div>';
+                
+                html += '<div class="calculation-step">';
+                html += '<strong>Step 7:</strong> Annual Income Required = (' + result.monthlyInvestmentRequired.toLocaleString('en-MY', {maximumFractionDigits: 2}) + ' × 12) ÷ 20% = RM ' + result.annualIncomeRequired.toLocaleString('en-MY', {maximumFractionDigits: 2});
+                html += '</div>';
+                
+                html += '<div class="result">';
+                html += 'Monthly Investment Needed: RM ' + result.monthlyInvestmentRequired.toLocaleString('en-MY', {maximumFractionDigits: 2}) + '<br>';
+                html += 'Minimum Annual Income: RM ' + result.annualIncomeRequired.toLocaleString('en-MY', {maximumFractionDigits: 2});
+                html += '</div>';
+            }
+            
+            document.getElementById(elementId).innerHTML = html;
+        }
+
+        function runValidationTests() {
+            var html = '<h4>Validation Test Results:</h4>';
+            var passed = 0;
+            var total = 0;
+            
+            // Test 1: Basic math validation
+            total++;
+            var testInput = {
+                currentAge: 30,
+                retirementAge: 50,
+                monthlyExpensesToday: 5000,
+                currentInvestments: 200000,
+                expectedROI: 0.08,
+                expectedInflationRate: 0.03,
+                safeWithdrawalRate: 0.04,
+                savingRate: 0.2
+            };
+            
+            var result = calculateFinancialFreedom(testInput);
+            var expectedFutureExpenses = 5000 * Math.pow(1.03, 20); // Should be ~9030.56
+            var tolerance = 1; // RM 1 tolerance
+            
+            if (Math.abs(result.futureMonthlyExpense - expectedFutureExpenses) < tolerance) {
+                html += '<div class="result">✓ Test 1 PASSED: Future expenses calculation correct</div>';
+                passed++;
+            } else {
+                html += '<div class="error">✗ Test 1 FAILED: Future expenses calculation incorrect. Expected: ' + expectedFutureExpenses.toFixed(2) + ', Got: ' + result.futureMonthlyExpense.toFixed(2) + '</div>';
+            }
+            
+            // Test 2: Future value validation
+            total++;
+            var expectedFutureValue = 200000 * Math.pow(1.08, 20); // Should be ~932383.02
+            if (Math.abs(result.futureValueOfCurrentSavings - expectedFutureValue) < 100) {
+                html += '<div class="result">✓ Test 2 PASSED: Future value of savings calculation correct</div>';
+                passed++;
+            } else {
+                html += '<div class="error">✗ Test 2 FAILED: Future value calculation incorrect. Expected: ' + expectedFutureValue.toFixed(2) + ', Got: ' + result.futureValueOfCurrentSavings.toFixed(2) + '</div>';
+            }
+            
+            // Test 3: Edge case - zero current savings
+            total++;
+            var zeroSavingsInput = {...testInput, currentInvestments: 0};
+            var zeroResult = calculateFinancialFreedom(zeroSavingsInput);
+            if (zeroResult.futureValueOfCurrentSavings === 0 && zeroResult.remainingAmountNeeded > 0) {
+                html += '<div class="result">✓ Test 3 PASSED: Zero savings case handled correctly</div>';
+                passed++;
+            } else {
+                html += '<div class="error">✗ Test 3 FAILED: Zero savings case not handled correctly</div>';
+            }
+            
+            // Test 4: Edge case - already financially free
+            total++;
+            var richInput = {...testInput, currentInvestments: 10000000};
+            var richResult = calculateFinancialFreedom(richInput);
+            if (richResult.isAlreadyFinanciallyFree && richResult.monthlyInvestmentRequired === 0) {
+                html += '<div class="result">✓ Test 4 PASSED: Already financially free case handled correctly</div>';
+                passed++;
+            } else {
+                html += '<div class="error">✗ Test 4 FAILED: Already financially free case not handled correctly</div>';
+            }
+            
+            html += '<br><div class="result">Overall: ' + passed + '/' + total + ' tests passed (' + ((passed/total)*100).toFixed(1) + '%)</div>';
+            document.getElementById('validation-results').innerHTML = html;
+        }
+
+        // Run tests when page loads
+        window.onload = function() {
+            // Test Case 1
+            runDetailedTest({
+                currentAge: 35,
+                retirementAge: 55,
+                monthlyExpensesToday: 3000,
+                currentInvestments: 100000,
+                expectedROI: 0.07,
+                expectedInflationRate: 0.03,
+                safeWithdrawalRate: 0.04,
+                savingRate: 0.2
+            }, 'test1-results');
+            
+            // Test Case 2
+            runDetailedTest({
+                currentAge: 40,
+                retirementAge: 60,
+                monthlyExpensesToday: 2000,
+                currentInvestments: 2000000,
+                expectedROI: 0.08,
+                expectedInflationRate: 0.025,
+                safeWithdrawalRate: 0.04,
+                savingRate: 0.2
+            }, 'test2-results');
+            
+            // Test Case 3
+            runDetailedTest({
+                currentAge: 30,
+                retirementAge: 50,
+                monthlyExpensesToday: 8000,
+                currentInvestments: 50000,
+                expectedROI: 0.06,
+                expectedInflationRate: 0.035,
+                safeWithdrawalRate: 0.035,
+                savingRate: 0.2
+            }, 'test3-results');
+            
+            // Run validation tests
+            runValidationTests();
+        };
+    </script>
+</body>
+</html>
