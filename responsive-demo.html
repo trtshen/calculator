@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator Responsive Demo</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="responsive.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .demo-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 2px solid #e7e7e7;
+            border-radius: 5px;
+        }
+        .viewport-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #007bff;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            z-index: 1000;
+        }
+        .responsive-indicator {
+            display: none;
+        }
+        @media (max-width: 767px) {
+            .responsive-indicator.mobile { display: block; }
+        }
+        @media (min-width: 768px) and (max-width: 991px) {
+            .responsive-indicator.tablet { display: block; }
+        }
+        @media (min-width: 992px) {
+            .responsive-indicator.desktop { display: block; }
+        }
+    </style>
+</head>
+<body>
+    <div class="viewport-info">
+        <div class="responsive-indicator mobile">📱 Mobile View</div>
+        <div class="responsive-indicator tablet">📱 Tablet View</div>
+        <div class="responsive-indicator desktop">💻 Desktop View</div>
+    </div>
+
+    <div class="container-fluid">
+        <h1>Calculator UI Responsive Demo</h1>
+        <p class="lead">This page demonstrates the responsive features implemented for the calculator app. Resize your browser window to see the changes!</p>
+
+        <div class="demo-section">
+            <h2>Responsive Navigation Tabs</h2>
+            <ul class="nav nav-tabs nav-justified">
+                <li class="active">
+                    <a href="#">TNB Bill Calculator</a>
+                </li>
+                <li>
+                    <a href="#">Financial Freedom Calculator</a>
+                </li>
+            </ul>
+            <p><strong>Responsive behavior:</strong> On mobile, tabs stack vertically with full-width buttons for better touch interaction.</p>
+        </div>
+
+        <div class="demo-section">
+            <h2>Responsive Forms</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">Total Consumption (kWh)</span>
+                            <input type="number" class="form-control" placeholder="Enter kWh" value="500">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-addon">Monthly Expenses (RM)</span>
+                            <input type="number" class="form-control" placeholder="Enter amount" value="3000">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary btn-block">Calculate</button>
+            <p><strong>Responsive behavior:</strong> Forms stack on mobile, have larger touch targets (44px height), and prevent iOS zoom with proper font sizing.</p>
+        </div>
+
+        <div class="demo-section">
+            <h2>Responsive Tables</h2>
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Tariff Block (kWh)</th>
+                            <th>Rate (sen/kWh)</th>
+                            <th>Service Tax</th>
+                            <th>Monthly Usage</th>
+                            <th>Estimated Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>1-200</td>
+                            <td>21.8</td>
+                            <td>No</td>
+                            <td>200 kWh</td>
+                            <td>RM 43.60</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>201-300</td>
+                            <td>33.4</td>
+                            <td>No</td>
+                            <td>100 kWh</td>
+                            <td>RM 33.40</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>301-600</td>
+                            <td>51.6</td>
+                            <td>No</td>
+                            <td>200 kWh</td>
+                            <td>RM 103.20</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>601-900</td>
+                            <td>54.6</td>
+                            <td>Yes (8%)</td>
+                            <td>0 kWh</td>
+                            <td>RM 0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p><strong>Responsive behavior:</strong> Tables scroll horizontally on mobile to prevent content cutoff, with smaller fonts for better fit.</p>
+        </div>
+
+        <div class="demo-section">
+            <h2>Responsive Typography</h2>
+            <h1>Main Heading (H1)</h1>
+            <h2>Secondary Heading (H2)</h2>
+            <h3>Tertiary Heading (H3)</h3>
+            <p>Regular paragraph text with responsive line height and font sizing.</p>
+            <p><strong>Responsive behavior:</strong> Font sizes scale down on mobile devices for better readability while maintaining hierarchy.</p>
+        </div>
+
+        <div class="demo-section">
+            <h2>Responsive Cards/Panels</h2>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    📊 Calculation Results
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <td width="60%">Total Monthly Bill</td>
+                                <td><strong>RM 180.20</strong></td>
+                            </tr>
+                            <tr>
+                                <td>Service Tax (8%)</td>
+                                <td>RM 14.42</td>
+                            </tr>
+                            <tr class="success">
+                                <td><strong>Final Amount</strong></td>
+                                <td><strong>RM 194.62</strong></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <p><strong>Responsive behavior:</strong> Panels maintain proper spacing and readability across all device sizes.</p>
+        </div>
+
+        <div class="demo-section">
+            <h2>Breakpoint Information</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">📱 Mobile</div>
+                        <div class="panel-body">
+                            <strong>≤ 767px</strong><br>
+                            • Stacked navigation<br>
+                            • Smaller fonts<br>
+                            • Horizontal table scroll<br>
+                            • Touch-optimized inputs
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">📱 Tablet</div>
+                        <div class="panel-body">
+                            <strong>768px - 991px</strong><br>
+                            • Balanced layout<br>
+                            • Medium font sizes<br>
+                            • Responsive tables<br>
+                            • Comfortable spacing
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-success">
+                        <div class="panel-heading">💻 Desktop</div>
+                        <div class="panel-body">
+                            <strong>≥ 992px</strong><br>
+                            • Full layout<br>
+                            • Larger typography<br>
+                            • Wide tables<br>
+                            • Spacious design
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
