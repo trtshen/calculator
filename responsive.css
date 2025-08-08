@@ -1,0 +1,223 @@
+/* Responsive CSS for Calculator App */
+
+/* Responsive Base Styles */
+* {
+	box-sizing: border-box;
+}
+
+body {
+	font-size: 16px;
+	line-height: 1.6;
+}
+
+/* Enhanced Table Responsiveness */
+.table-responsive {
+	width: 100%;
+	margin-bottom: 15px;
+	overflow-x: auto;
+	overflow-y: hidden;
+	-webkit-overflow-scrolling: touch;
+	border: 1px solid #ddd;
+}
+
+.table-responsive > .table {
+	margin-bottom: 0;
+	white-space: nowrap;
+}
+
+.table-responsive > .table > thead > tr > th,
+.table-responsive > .table > tbody > tr > th,
+.table-responsive > .table > tfoot > tr > th,
+.table-responsive > .table > thead > tr > td,
+.table-responsive > .table > tbody > tr > td,
+.table-responsive > .table > tfoot > tr > td {
+	white-space: nowrap;
+}
+
+table th,
+td {
+	text-align: center;
+	padding: 8px !important;
+}
+
+/* Mobile-first responsive typography */
+h1 {
+	font-size: 1.8rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+}
+
+h3 {
+	font-size: 1.3rem;
+}
+
+/* Responsive form improvements */
+.form-group {
+	margin-bottom: 20px;
+}
+
+.input-group {
+	width: 100%;
+}
+
+.input-group-addon {
+	white-space: nowrap;
+	font-size: 14px;
+}
+
+.form-control {
+	font-size: 16px; /* Prevents zoom on iOS */
+	height: 44px; /* Better touch target */
+}
+
+.btn {
+	min-height: 44px; /* Better touch target */
+	font-size: 16px;
+}
+
+/* Navigation improvements */
+.nav-tabs {
+	margin-bottom: 20px;
+}
+
+.nav-tabs > li > a {
+	padding: 12px 15px;
+	font-size: 16px;
+}
+
+.spacer {
+	padding-top: 1.5em;
+}
+
+/* Panel improvements */
+.panel {
+	margin-bottom: 20px;
+}
+
+.panel-heading {
+	font-size: 16px;
+	font-weight: bold;
+}
+
+/* Mobile-specific styles */
+@media (max-width: 767px) {
+	body {
+		font-size: 14px;
+	}
+
+	h1 {
+		font-size: 1.5rem;
+		margin-bottom: 15px;
+	}
+
+	h2 {
+		font-size: 1.3rem;
+	}
+
+	h3 {
+		font-size: 1.2rem;
+	}
+
+	/* Stack form inputs on mobile */
+	.form-horizontal .form-group {
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	/* Better mobile table handling */
+	.table-responsive {
+		border: none;
+	}
+
+	.table-responsive .table {
+		font-size: 12px;
+	}
+
+	.table-responsive .table th,
+	.table-responsive .table td {
+		padding: 6px !important;
+		font-size: 12px;
+	}
+
+	/* Navigation improvements for mobile */
+	.nav-tabs {
+		border-bottom: none;
+	}
+
+	.nav-tabs > li {
+		float: none;
+		margin-bottom: 2px;
+	}
+
+	.nav-tabs > li > a {
+		margin-right: 0;
+		border-radius: 4px;
+		text-align: center;
+	}
+
+	.nav-tabs > li.active > a,
+	.nav-tabs > li.active > a:hover,
+	.nav-tabs > li.active > a:focus {
+		border: 1px solid #337ab7;
+		background-color: #337ab7;
+		color: white;
+	}
+
+	/* Input group improvements for mobile */
+	.input-group-addon {
+		font-size: 12px;
+		padding: 8px 10px;
+	}
+
+	/* Panel improvements for mobile */
+	.panel-body {
+		padding: 10px;
+	}
+
+	/* Row and column improvements */
+	.row {
+		margin-left: -10px;
+		margin-right: -10px;
+	}
+
+	.col-md-12 {
+		padding-left: 10px;
+		padding-right: 10px;
+	}
+
+	/* Better spacing for mobile */
+	.spacer {
+		padding-top: 1em;
+	}
+}
+
+/* Tablet styles */
+@media (min-width: 768px) and (max-width: 991px) {
+	.table-responsive .table {
+		font-size: 14px;
+	}
+
+	.form-control {
+		font-size: 15px;
+	}
+}
+
+/* Desktop improvements */
+@media (min-width: 992px) {
+	.container {
+		max-width: 1200px;
+	}
+}
+
+/* Print styles */
+@media print {
+	.nav-tabs {
+		display: none;
+	}
+	
+	.btn {
+		display: none;
+	}
+}

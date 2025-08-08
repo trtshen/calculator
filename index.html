@@ -9,17 +9,226 @@
 		integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
 		crossorigin="anonymous">
 	<style>
+		/* Responsive Base Styles */
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			font-size: 16px;
+			line-height: 1.6;
+		}
+
+		/* Enhanced Table Responsiveness */
+		.table-responsive {
+			width: 100%;
+			margin-bottom: 15px;
+			overflow-x: auto;
+			overflow-y: hidden;
+			-webkit-overflow-scrolling: touch;
+			border: 1px solid #ddd;
+		}
+
+		.table-responsive > .table {
+			margin-bottom: 0;
+			white-space: nowrap;
+		}
+
+		.table-responsive > .table > thead > tr > th,
+		.table-responsive > .table > tbody > tr > th,
+		.table-responsive > .table > tfoot > tr > th,
+		.table-responsive > .table > thead > tr > td,
+		.table-responsive > .table > tbody > tr > td,
+		.table-responsive > .table > tfoot > tr > td {
+			white-space: nowrap;
+		}
+
 		table th,
 		td {
 			text-align: center;
+			padding: 8px !important;
+		}
+
+		/* Mobile-first responsive typography */
+		h1 {
+			font-size: 1.8rem;
+		}
+
+		h2 {
+			font-size: 1.5rem;
+		}
+
+		h3 {
+			font-size: 1.3rem;
+		}
+
+		/* Responsive form improvements */
+		.form-group {
+			margin-bottom: 20px;
+		}
+
+		.input-group {
+			width: 100%;
+		}
+
+		.input-group-addon {
+			white-space: nowrap;
+			font-size: 14px;
+		}
+
+		.form-control {
+			font-size: 16px; /* Prevents zoom on iOS */
+			height: 44px; /* Better touch target */
+		}
+
+		.btn {
+			min-height: 44px; /* Better touch target */
+			font-size: 16px;
+		}
+
+		/* Navigation improvements */
+		.nav-tabs {
+			margin-bottom: 20px;
+		}
+
+		.nav-tabs > li > a {
+			padding: 12px 15px;
+			font-size: 16px;
 		}
 
 		.spacer {
 			padding-top: 1.5em;
 		}
 
-		.nav-tabs {
+		/* Panel improvements */
+		.panel {
 			margin-bottom: 20px;
+		}
+
+		.panel-heading {
+			font-size: 16px;
+			font-weight: bold;
+		}
+
+		/* Mobile-specific styles */
+		@media (max-width: 767px) {
+			body {
+				font-size: 14px;
+			}
+
+			h1 {
+				font-size: 1.5rem;
+				margin-bottom: 15px;
+			}
+
+			h2 {
+				font-size: 1.3rem;
+			}
+
+			h3 {
+				font-size: 1.2rem;
+			}
+
+			/* Stack form inputs on mobile */
+			.form-horizontal .form-group {
+				margin-left: 0;
+				margin-right: 0;
+			}
+
+			/* Better mobile table handling */
+			.table-responsive {
+				border: none;
+			}
+
+			.table-responsive .table {
+				font-size: 12px;
+			}
+
+			.table-responsive .table th,
+			.table-responsive .table td {
+				padding: 6px !important;
+				font-size: 12px;
+			}
+
+			/* Navigation improvements for mobile */
+			.nav-tabs {
+				border-bottom: none;
+			}
+
+			.nav-tabs > li {
+				float: none;
+				margin-bottom: 2px;
+			}
+
+			.nav-tabs > li > a {
+				margin-right: 0;
+				border-radius: 4px;
+				text-align: center;
+			}
+
+			.nav-tabs > li.active > a,
+			.nav-tabs > li.active > a:hover,
+			.nav-tabs > li.active > a:focus {
+				border: 1px solid #337ab7;
+				background-color: #337ab7;
+				color: white;
+			}
+
+			/* Input group improvements for mobile */
+			.input-group-addon {
+				font-size: 12px;
+				padding: 8px 10px;
+			}
+
+			/* Panel improvements for mobile */
+			.panel-body {
+				padding: 10px;
+			}
+
+			/* Row and column improvements */
+			.row {
+				margin-left: -10px;
+				margin-right: -10px;
+			}
+
+			.col-md-12 {
+				padding-left: 10px;
+				padding-right: 10px;
+			}
+
+			/* Better spacing for mobile */
+			.spacer {
+				padding-top: 1em;
+			}
+		}
+
+		/* Tablet styles */
+		@media (min-width: 768px) and (max-width: 991px) {
+			.table-responsive .table {
+				font-size: 14px;
+			}
+
+			.form-control {
+				font-size: 15px;
+			}
+		}
+
+		/* Desktop improvements */
+		@media (min-width: 992px) {
+			.container {
+				max-width: 1200px;
+			}
+		}
+
+		/* Print styles */
+		@media print {
+			.nav-tabs {
+				display: none;
+			}
+			
+			.btn {
+				display: none;
+			}
 		}
 	</style>
 </head>
@@ -27,7 +236,8 @@
 <body ng-app="tnb"
 	ng-cloak>
 
-	<main class="text-center">
+	<div class="container-fluid">
+		<main class="text-center">
 		<!-- Navigation Tabs -->
 		<nav class="col-md-12">
 			<ul class="nav nav-tabs nav-justified">
@@ -48,48 +258,50 @@
 			</header>
 
 			<section class="col-md-12">
-				<table class="table table-striped">
-					<thead>
-						<tr>
-							<th>No</th>
-							<th>Tariff Block (kWh)</th>
-							<th>Rate (sen/kWh)</th>
-							<th>Service Tax</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>1</td>
-							<td>1-200</td>
-							<td>21.8</td>
-							<td>No</td>
-						</tr>
-						<tr>
-							<td>2</td>
-							<td>201-300</td>
-							<td>33.4</td>
-							<td>No</td>
-						</tr>
-						<tr>
-							<td>3</td>
-							<td>301-600</td>
-							<td>51.6</td>
-							<td>No</td>
-						</tr>
-						<tr>
-							<td>4</td>
-							<td>601-900</td>
-							<td>54.6</td>
-							<td>Yes (8%)</td>
-						</tr>
-						<tr>
-							<td>5</td>
-							<td>901 onwards</td>
-							<td>57.1</td>
-							<td>Yes (8%)</td>
-						</tr>
-					</tbody>
-				</table>
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+							<tr>
+								<th>No</th>
+								<th>Tariff Block (kWh)</th>
+								<th>Rate (sen/kWh)</th>
+								<th>Service Tax</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>1</td>
+								<td>1-200</td>
+								<td>21.8</td>
+								<td>No</td>
+							</tr>
+							<tr>
+								<td>2</td>
+								<td>201-300</td>
+								<td>33.4</td>
+								<td>No</td>
+							</tr>
+							<tr>
+								<td>3</td>
+								<td>301-600</td>
+								<td>51.6</td>
+								<td>No</td>
+							</tr>
+							<tr>
+								<td>4</td>
+								<td>601-900</td>
+								<td>54.6</td>
+								<td>Yes (8%)</td>
+							</tr>
+							<tr>
+								<td>5</td>
+								<td>901 onwards</td>
+								<td>57.1</td>
+								<td>Yes (8%)</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</section>
 
 			<section class="col-md-12">
@@ -151,14 +363,16 @@
 					<div class="panel-heading">
 						Consumable kWh (Experimental)
 					</div>
-					<table class="table table-striped">
-						<tbody>
-							<tr>
-								<td width="50%">Predicted Consumable kWh</td>
-								<td>{{consumable}} kWh</td>
-							</tr>
-						</tbody>
-					</table>
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<tbody>
+								<tr>
+									<td width="50%">Predicted Consumable kWh</td>
+									<td>{{consumable}} kWh</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</section>
 
@@ -168,26 +382,28 @@
 					<div class="panel-heading">
 						Current Bill Breakdown
 					</div>
-					<table class="table table-striped">
-						<tbody>
-							<tr>
-								<td width="50%">Current Bill (Before Service Tax)</td>
-								<td><strong>RM {{total}}</strong></td>
-							</tr>
-							<tr>
-								<td>8% Service Tax</td>
-								<td>RM {{gst}}</td>
-							</tr>
-							<tr>
-								<td>ICPT Adjustment</td>
-								<td>RM {{icpt}}</td>
-							</tr>
-							<tr class="success">
-								<td><strong>Current Bill (Inclusive of Service Tax)</strong></td>
-								<td><strong>RM {{gstTotal}}</strong></td>
-							</tr>
-						</tbody>
-					</table>
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<tbody>
+								<tr>
+									<td width="50%">Current Bill (Before Service Tax)</td>
+									<td><strong>RM {{total}}</strong></td>
+								</tr>
+								<tr>
+									<td>8% Service Tax</td>
+									<td>RM {{gst}}</td>
+								</tr>
+								<tr>
+									<td>ICPT Adjustment</td>
+									<td>RM {{icpt}}</td>
+								</tr>
+								<tr class="success">
+									<td><strong>Current Bill (Inclusive of Service Tax)</strong></td>
+									<td><strong>RM {{gstTotal}}</strong></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</section>
 
@@ -197,25 +413,27 @@
 					<div class="panel-heading">
 						Tariff Breakdown
 					</div>
-					<table class="table table-striped">
-						<thead>
-							<tr>
-								<th>Tier</th>
-								<th>Consumption (kWh)</th>
-								<th>Rate (sen/kWh)</th>
-								<th>Charge (RM)</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr ng-repeat="tier in result.tiers"
-								ng-if="tier.consumption > 0">
-								<td>{{tier.min}}-{{tier.max > 0 ? tier.max : tier.min + '+'}}</td>
-								<td>{{tier.consumption}}</td>
-								<td>{{tier.rate}}</td>
-								<td>{{tier.charge | number:2}}</td>
-							</tr>
-						</tbody>
-					</table>
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>Tier</th>
+									<th>Consumption (kWh)</th>
+									<th>Rate (sen/kWh)</th>
+									<th>Charge (RM)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="tier in result.tiers"
+									ng-if="tier.consumption > 0">
+									<td>{{tier.min}}-{{tier.max > 0 ? tier.max : tier.min + '+'}}</td>
+									<td>{{tier.consumption}}</td>
+									<td>{{tier.rate}}</td>
+									<td>{{tier.charge | number:2}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</section>
 
@@ -318,45 +536,47 @@
 					<div class="panel-heading">
 						📊 Retirement Plan Summary
 					</div>
-					<table class="table table-striped">
-						<tbody>
-							<tr>
-								<td width="50%"><strong>Years to Retirement</strong></td>
-								<td><strong>{{freedomResult.yearsToRetire}} years</strong></td>
-							</tr>
-							<tr>
-								<td>Future Monthly Expenses (Inflation-adjusted)</td>
-								<td>RM {{freedomResult.futureMonthlyExpense | number:2}}</td>
-							</tr>
-							<tr class="success">
-								<td><strong>Target Retirement Fund Required</strong></td>
-								<td><strong>RM {{freedomResult.requiredRetirementFund | number:2}}</strong></td>
-							</tr>
-							<tr class="info">
-								<td>Future Value of Current Savings</td>
-								<td>RM {{freedomResult.futureValueOfCurrentSavings | number:2}}</td>
-							</tr>
-							<tr ng-if="!freedomResult.isAlreadyFinanciallyFree">
-								<td>Remaining Amount Needed</td>
-								<td>RM {{freedomResult.remainingAmountNeeded | number:2}}</td>
-							</tr>
-							<tr ng-if="freedomResult.isAlreadyFinanciallyFree" class="success">
-								<td colspan="2"><strong>🎉 Congratulations! You're already on track for financial freedom with your current savings!</strong></td>
-							</tr>
-							<tr class="warning" ng-if="!freedomResult.isAlreadyFinanciallyFree">
-								<td><strong>Monthly Investment Required</strong></td>
-								<td><strong>RM {{freedomResult.monthlyInvestmentRequired | number:2}}</strong></td>
-							</tr>
-							<tr ng-if="!freedomResult.isAlreadyFinanciallyFree">
-								<td>Total Capital to Be Invested</td>
-								<td>RM {{freedomResult.totalInvestedCapital | number:2}}</td>
-							</tr>
-							<tr class="info" ng-if="!freedomResult.isAlreadyFinanciallyFree">
-								<td><strong>Minimum Annual Income Required (20% savings)</strong></td>
-								<td><strong>RM {{freedomResult.annualIncomeRequired | number:2}}</strong></td>
-							</tr>
-						</tbody>
-					</table>
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<tbody>
+								<tr>
+									<td width="50%"><strong>Years to Retirement</strong></td>
+									<td><strong>{{freedomResult.yearsToRetire}} years</strong></td>
+								</tr>
+								<tr>
+									<td>Future Monthly Expenses (Inflation-adjusted)</td>
+									<td>RM {{freedomResult.futureMonthlyExpense | number:2}}</td>
+								</tr>
+								<tr class="success">
+									<td><strong>Target Retirement Fund Required</strong></td>
+									<td><strong>RM {{freedomResult.requiredRetirementFund | number:2}}</strong></td>
+								</tr>
+								<tr class="info">
+									<td>Future Value of Current Savings</td>
+									<td>RM {{freedomResult.futureValueOfCurrentSavings | number:2}}</td>
+								</tr>
+								<tr ng-if="!freedomResult.isAlreadyFinanciallyFree">
+									<td>Remaining Amount Needed</td>
+									<td>RM {{freedomResult.remainingAmountNeeded | number:2}}</td>
+								</tr>
+								<tr ng-if="freedomResult.isAlreadyFinanciallyFree" class="success">
+									<td colspan="2"><strong>🎉 Congratulations! You're already on track for financial freedom with your current savings!</strong></td>
+								</tr>
+								<tr class="warning" ng-if="!freedomResult.isAlreadyFinanciallyFree">
+									<td><strong>Monthly Investment Required</strong></td>
+									<td><strong>RM {{freedomResult.monthlyInvestmentRequired | number:2}}</strong></td>
+								</tr>
+								<tr ng-if="!freedomResult.isAlreadyFinanciallyFree">
+									<td>Total Capital to Be Invested</td>
+									<td>RM {{freedomResult.totalInvestedCapital | number:2}}</td>
+								</tr>
+								<tr class="info" ng-if="!freedomResult.isAlreadyFinanciallyFree">
+									<td><strong>Minimum Annual Income Required (20% savings)</strong></td>
+									<td><strong>RM {{freedomResult.annualIncomeRequired | number:2}}</strong></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</section>
 
@@ -376,6 +596,7 @@
 			</section>
 		</section>
 	</main>
+	</div>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
